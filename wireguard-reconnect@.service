@@ -1,0 +1,12 @@
+[Unit]
+Description=WireGuard reconnect
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+TimeoutStartSec=infinity
+ExecStart=/bin/bash -c "INTERFACE=$(echo -n %i | cut -d '-' -f1); IP=$(echo -n %i | cut -d '-' -f2) ; wireguard-reconnect -i $INTERFACE -g $IP"
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
