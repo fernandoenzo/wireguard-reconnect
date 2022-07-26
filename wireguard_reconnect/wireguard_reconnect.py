@@ -3,20 +3,14 @@
 
 import os
 import signal
-import subprocess
 import sys
-from builtins import print as _print
 from threading import Event
 
 from wireguard_reconnect.parser import parse_args, ARGS
+from wireguard_reconnect.utils import print_flush as print, run_command, header
 
 loop = True
 sleep_event = Event()
-
-
-def print(*args, **kwargs):
-    kwargs['flush'] = True
-    return _print(*args, **kwargs)
 
 
 def close(signum, frame):
@@ -30,29 +24,20 @@ signal.signal(signal.SIGTERM, close)
 signal.signal(signal.SIGINT, close)
 
 
-def header(title: str):
-    hyphens = '-' * (len(title) + 2)
-    return f' {hyphens}\n  {title}\n {hyphens}\n'
-
-
-def run_command(command):
-    return subprocess.run(command, capture_output=True, start_new_session=True, text=True)
-
-
 def link_up():
-    ret = run_command(['ip', 'link', 'show', ARGS.INTERFACE])
+    ret = run_command(['ip', 'link', 'show', ARGS.INTERFACE], systemd=ARGS.SYSTEMD)
     return not ret.returncode
 
 
 def ping():
     if ARGS.GATEWAY is None:
         return True
-    ret = run_command(['ping', '-W5', '-c3', '-I', ARGS.INTERFACE, ARGS.GATEWAY])
+    ret = run_command(['ping', '-W5', '-c3', '-I', ARGS.INTERFACE, ARGS.GATEWAY], systemd=ARGS.SYSTEMD)
     return not ret.returncode
 
 
 def set_wg():
-    ret = run_command(['wg-quick', 'up', ARGS.INTERFACE])
+    ret = run_command(['wg-quick', 'up', ARGS.INTERFACE], systemd=ARGS.SYSTEMD)
     if ret.stderr.count('does not exist'):
         print(ret.stderr, end='')
         sys.exit(1)
@@ -64,7 +49,7 @@ def set_wg():
 
 
 def unset_wg():
-    ret = run_command(['wg-quick', 'down', ARGS.INTERFACE])
+    ret = run_command(['wg-quick', 'down', ARGS.INTERFACE], systemd=ARGS.SYSTEMD)
     return not ret.returncode
 
 
@@ -87,6 +72,7 @@ def main():
         sys.exit(0)
     print(header('WireGuard Reconnect'))
     parse_args()
+    ARGS.SYSTEMD = not run_command(['pidof', 'systemd'], systemd=False).returncode
     print(f'Interface: {ARGS.INTERFACE}\nGateway: {ARGS.GATEWAY}\nRecheck period: {ARGS.PERIOD}s\n ')
     while loop:
         reconnect()

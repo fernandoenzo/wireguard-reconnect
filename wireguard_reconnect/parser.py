@@ -10,6 +10,7 @@ class ARGS:
     INTERFACE = None
     GATEWAY = None
     PERIOD = None
+    SYSTEMD = None
 
 
 class CustomArgumentFormatter(ArgumentDefaultsHelpFormatter, RawTextHelpFormatter):

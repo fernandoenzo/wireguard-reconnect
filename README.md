@@ -112,7 +112,7 @@ To make the service to start at system boot, execute:
 sudo systemctl enable wireguard-reconnect@wg0-10.4.0.1.service
 ```
 
-To watch the program progress:
+To watch the program log:
 
 ```commandline
 sudo journalctl -u wireguard-reconnect@wg0-10.4.0.1.service -f

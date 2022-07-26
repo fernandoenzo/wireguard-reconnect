@@ -7,7 +7,7 @@ from setuptools import find_packages
 
 name = 'wireguard-reconnect'
 
-version = '1.0.6'
+version = '1.0.7'
 
 description = 'This program performs unattended handling of selected WireGuard interfaces, bringing them up and down depending on whether there is connectivity to the server or not, ' \
               'or simply bringing them up and keeping them up.\nWorks great combined with systemd.'
