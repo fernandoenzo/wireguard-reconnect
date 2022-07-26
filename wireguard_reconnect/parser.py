@@ -39,7 +39,6 @@ def sort_argparse_help(parser: ArgumentParser):
         g._group_actions.sort(key=lambda x: x.dest)
 
 
-# SIGNER PARSER
 parser = ArgumentParser(prog='wireguard-reconnect', description='This program performs unattended handling of selected WireGuard interfaces, '
                                                                 'bringing them up and down depending on whether there is connectivity to the server or not, '
                                                                 'or simply bringing them up and keeping them up.\nWorks great combined with systemd.', formatter_class=CustomArgumentFormatter)
